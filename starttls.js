@@ -159,7 +159,7 @@ function connect(options, cb) {
 
   var defaults = {
     rejectUnauthorized: '0' !== process.env.NODE_TLS_REJECT_UNAUTHORIZED,
-    requestCert: false,
+    requestCert: true,
     isServer: false
   };
   options = util._extend(defaults, options || {});
