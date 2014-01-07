@@ -216,6 +216,21 @@ function connect(options, cb) {
   if (cb)
     result.once('secureConnect', cb);
 
+  if (!options.socket) {
+    assert(!legacy);
+    var connect_opt;
+    if (options.path && !options.port) {
+      connect_opt = { path: options.path };
+    } else {
+      connect_opt = {
+        port: options.port,
+        host: options.host,
+        localAddress: options.localAddress
+      };
+    }
+    socket.connect(connect_opt);
+  }
+
   return result;
 
   function onHandle() {
