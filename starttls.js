@@ -2,6 +2,8 @@
 /* this whole file only exists because tls.start
  * doens't exists and tls.connect cannot start server
  * connections
+ *
+ * copied from _tls_wrap.js
  */
 
 // Target API:
