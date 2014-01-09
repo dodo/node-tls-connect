@@ -323,9 +323,9 @@ function legacyPipe(pair, socket) {
   // its data from the cleartext side, we have to give it a
   // light kick to get in motion again.
   socket.on('drain', function() {
-    if (pair.encrypted._pending)
+    if (pair.encrypted._pending && pair.encrypted._writePending)
       pair.encrypted._writePending();
-    if (pair.cleartext._pending)
+    if (pair.cleartext._pending && pair.cleartext._writePending)
       pair.cleartext._writePending();
     if (pair.encrypted.read)
       pair.encrypted.read(0);
