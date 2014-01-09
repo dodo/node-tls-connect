@@ -191,8 +191,6 @@ function connect(options, cb) {
       rejectUnauthorized: !!options.rejectUnauthorized,
       NPNProtocols: NPN.NPNProtocols
     });
-    if (options.socket)
-      socket._connecting = options.socket._connecting;
     result = socket;
   }
 
