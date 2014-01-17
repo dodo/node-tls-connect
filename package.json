@@ -1,6 +1,6 @@
 {
   "name": "tls-connect",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "tls.connect fallback",
   "main": "starttls.js",
   "scripts": {
