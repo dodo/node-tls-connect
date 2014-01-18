@@ -30,18 +30,27 @@ var util = require('util')
 var assert = require('assert')
 var crypto = require('crypto')
 
-function legacyConnect(hostname, options, credentials) {
-  var pair = tls.createSecurePair(credentials,
-                                  !!options.isServer,
-                                  !!options.requestCert,
-                                  !!options.rejectUnauthorized);
-  legacyPipe(pair, options.socket);
-  pair.cleartext._controlReleased = true;
-  pair.on('error', function(err) {
-    pair.cleartext.emit('error', err);
-  });
+// Returns an array [options] or [options, cb]
+// It is the same as the argument of Socket.prototype.connect().
+function __normalizeConnectArgs(args) {
+  var options = {};
 
-  return pair;
+  if (typeof(args[0]) == 'object') {
+    // connect(options, [cb])
+    options = args[0];
+  } else if (isPipeName(args[0])) {
+    // connect(path, [cb]);
+    options.path = args[0];
+  } else {
+    // connect(port, [host], [cb])
+    options.port = args[0];
+    if (typeof(args[1]) === 'string') {
+      options.host = args[1];
+    }
+  }
+
+  var cb = args[args.length - 1];
+  return typeof(cb) === 'function' ? [options, cb] : [options];
 }
 
 function __checkServerIdentity(host, cert) {
@@ -155,7 +164,57 @@ function __checkServerIdentity(host, cert) {
   return valid;
 };
 
-function connect(options, cb) {
+// Target API:
+//
+//  var s = tls.connect({port: 8000, host: "google.com"}, function() {
+//    if (!s.authorized) {
+//      s.destroy();
+//      return;
+//    }
+//
+//    // s.socket;
+//
+//    s.end("hello world\n");
+//  });
+//
+//
+function normalizeConnectArgs(listArgs) {
+  var args = __normalizeConnectArgs(listArgs);
+  var options = args[0];
+  var cb = args[1];
+
+  if (typeof(listArgs[1]) === 'object') {
+    options = util._extend(options, listArgs[1]);
+  } else if (typeof(listArgs[2]) === 'object') {
+    options = util._extend(options, listArgs[2]);
+  }
+
+  return (cb) ? [options, cb] : [options];
+}
+
+function legacyConnect(hostname, options, NPN, credentials) {
+  assert(options.socket);
+  var pair = tls.createSecurePair(credentials,
+                                  !!options.isServer,
+                                  !!options.requestCert,
+                                  !!options.rejectUnauthorized,
+                                  {
+                                    NPNProtocols: NPN.NPNProtocols,
+                                    servername: hostname
+                                  });
+  legacyPipe(pair, options.socket);
+  pair.cleartext._controlReleased = true;
+  pair.on('error', function(err) {
+    pair.cleartext.emit('error', err);
+  });
+
+  return pair;
+}
+
+function connect(/* [port, host], options, cb */) {
+  var args = normalizeConnectArgs(arguments);
+  var options = args[0];
+  var cb = args[1];
 
   var defaults = {
     rejectUnauthorized: '0' !== process.env.NODE_TLS_REJECT_UNAUTHORIZED,
@@ -180,7 +239,7 @@ function connect(options, cb) {
   var result;
   if (typeof tls.TLSSocket === 'undefined') {
     legacy = true;
-    socket = legacyConnect(hostname, options, credentials);
+    socket = legacyConnect(hostname, options, NPN, credentials);
     result = socket.cleartext;
   } else {
     legacy = false;
