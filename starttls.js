@@ -1,4 +1,8 @@
 'use strict';
+
+module.exports = connect;
+connect.connect = connect;
+
 /* this whole file only exists because tls.start
  * doens't exists and tls.connect cannot start server
  * connections
@@ -25,12 +29,6 @@ var tls = require('tls')
 var util = require('util')
 var assert = require('assert')
 var crypto = require('crypto')
-
-module.exports = function start(socket, opts, cb) {
-    assert(socket);
-    var options = util._extend({socket:socket}, opts || {});
-    return connect(options, cb);
-};
 
 function legacyConnect(hostname, options, credentials) {
   var pair = tls.createSecurePair(credentials,
