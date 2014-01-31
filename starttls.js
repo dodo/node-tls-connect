@@ -360,7 +360,8 @@ function legacyPipe(pair, socket) {
     process.nextTick(function() {
       // Encrypted should be unpiped from socket to prevent possible
       // write after destroy.
-      pair.encrypted.unpipe(socket);
+      if (pair.encrypted.unpipe)
+        pair.encrypted.unpipe(socket);
       socket.destroySoon();
     });
   });
