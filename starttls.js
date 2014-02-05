@@ -226,7 +226,7 @@ function connect(/* [port, host], options, cb */) {
   var hostname = options.servername ||
                  options.host ||
                  options.socket && options.socket._host ||
-                 'localhost',
+                 '127.0.0.1',
       NPN = {},
       credentials = options.credentials || crypto.createCredentials(options);
   if (tls.convertNPNProtocols)
