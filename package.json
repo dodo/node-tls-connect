@@ -1,15 +1,12 @@
 {
-  "name": "tls-connect",
-  "version": "0.2.2",
+  "name": "node-xmpp-tls-connect",
+  "version": "1.0.0",
   "description": "tls.connect fallback",
   "main": "starttls.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/dodo/node-tls-connect.git"
-  },
+  "repository": "github:node-xmpp/tls-connect",
   "keywords": [
     "tls",
     "connect",
@@ -18,9 +15,7 @@
     "replacement",
     "patch"
   ],
-  "author": "▟ ▖▟ ▖",
+  "author": "Sonny Piers <sonny@fastmail.net>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/dodo/node-tls-connect/issues"
-  }
+  "bugs": "https://github.com/node-xmpp/tls-connect/issues"
 }
