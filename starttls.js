@@ -228,7 +228,10 @@ function connect(/* [port, host], options, cb */) {
                  options.socket && options.socket._host ||
                  '127.0.0.1',
       NPN = {},
-      credentials = options.credentials || crypto.createCredentials(options);
+      // createCredentials() is deprecated, use tls.createSecureContext instead
+      // https://github.com/dodo/node-tls-connect/issues/2
+      credentials = options.credentials || tls.createSecureContext(options);
+  
   if (tls.convertNPNProtocols)
     tls.convertNPNProtocols(options.NPNProtocols, NPN);
 

@@ -2,7 +2,7 @@
 +++ lib/_tls_wrap.js	2014-01-18 00:34:30.489811735 +0100
 @@ -691,7 +691,9 @@
    var cb = args[1];
- 
+
    var defaults = {
 -    rejectUnauthorized: '0' !== process.env.NODE_TLS_REJECT_UNAUTHORIZED
 +    rejectUnauthorized: '0' !== process.env.NODE_TLS_REJECT_UNAUTHORIZED,
@@ -10,7 +10,7 @@
 +    isServer: false
    };
    options = util._extend(defaults, options || {});
- 
+
 @@ -699,7 +701,7 @@
                   options.host ||
                   options.socket && options.socket._host,
@@ -18,7 +18,7 @@
 -      credentials = crypto.createCredentials(options);
 +      credentials = options.credentials || crypto.createCredentials(options);
    tls.convertNPNProtocols(options.NPNProtocols, NPN);
- 
+
    // Wrapping TLS socket inside another TLS socket was requested -
 @@ -716,8 +718,8 @@
      legacy = false;
@@ -34,7 +34,7 @@
 @@ -771,7 +773,8 @@
        if (options.servername)
          socket.setServername(options.servername);
- 
+
 -      socket._start();
 +      if (!options.isServer)
 +        socket._start();
